@@ -1,0 +1,32 @@
+/* media query break points */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: hsl(var(--primary-background-color));
+  color: hsl(var(--primary-text-color));
+}
+
+#root {
+  width: 100%;
+  max-width: 1400px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-inline: 1rem;
+}
+
+.tile.closed {
+  background-color: var(--color-slate-700);
+}
+.tile.opened {
+  background-color: var(--color-slate-400);
+}
+.tile.matched {
+  background-color: var(--color-orange-300);
+}/*# sourceMappingURL=App.css.map */

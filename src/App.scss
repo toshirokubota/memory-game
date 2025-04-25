@@ -1,0 +1,52 @@
+/* media query break points */
+$tablet-break: 700px; //45rem;
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: hsl(var(--primary-background-color));
+    color: hsl(var(--primary-text-color));
+}
+
+#root {
+    width: 100%;
+    max-width: 1400px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-inline: 1rem;
+}
+
+.tile {
+    &.closed {
+        background-color: var(--color-slate-700);
+    }
+    &.opened {
+        background-color: var(--color-slate-400);
+    }
+    &.matched {
+        background-color: var(--color-orange-300);
+    }
+}
+
+// header {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//     box-shadow: 0px 2px 4px hsla(var(--color-black) / 0.06);    
+//     background-color: hsl(var(--secondary-background-color));
+//     padding: 2rem 1rem;
+//     button {
+//         border: none;
+//         outline: none;
+//         background-color: transparent;
+//         cursor: pointer;
+//     }
+// }
+

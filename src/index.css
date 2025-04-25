@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Color */
+  /*--color-orange: 37 98% 54%; /* RGB: 253 162 20 */
+  /*--color-slate-400: 203 28% 79%; /* RGB: 188 206 217 */
+  /*--color-slate-500: 203 22% 55%; /* RGB: 113 145 165 */
+  /*--color-slate-blue: 205 37% 55%; /* RGB: 99 149 184 */  
+  /*--color-slate-600: 205 30% 27%; /* RGB: 48 72 89 */
+  /*--color-slate-800: 206 45% 15%; /* RGB: 21 41 56 */
+  /*--color-gray-100: 0 0% 95%; /* RGB: 242 242 242 */
+  /*--color-gray-50: 0 0% 99%; /* RGB: 252 252 252 */
+  /*--color-white: 0 0% 100%;
+  /*--color-black: 0 0% 0%;
+
+  /* Font size */
+  --fs-header1: 48px;
+  --fs-header2: 32px;
+  --fs-header3: 20px;
+  --fs-body: 18px;
+  --fs_Number4x4: 56px;
+  --fs_Number6x6: 44px;
+
+  --primary-background-color: var(--color-white);
+  --secondary-background-color: var(--color-white);
+  --primary-text-color: var(--color-slate-800);
+}
+
+
