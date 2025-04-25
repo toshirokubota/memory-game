@@ -29,4 +29,9 @@ main {
 }
 .tile.matched {
   background-color: var(--color-orange-300);
+}
+
+.game-board {
+  display: grid;
+  gap: 1rem;
 }/*# sourceMappingURL=App.css.map */

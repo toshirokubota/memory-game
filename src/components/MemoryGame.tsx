@@ -1,26 +1,26 @@
 import React from 'react';
-import {useState, createContext } from 'react';
+import {useState, useEffect, createContext, useContext } from 'react';
 import { GameOption } from "../App";
 import Header from './Header'
 import FooterSolo from './FooterSolo';
 import FooterMulti from './FooterMulti';
 
-export type MoveState = 'first' | 'second' | 'end';
-export type GameStateType = {
-    move: MoveState,
-    //for multi-player game
-    scores: number[],
-    //for single player game
-    time: number,
-    num_moves: number
-}
-export const GameContext = createContext<GameStateType | null>(null);
+// export type MoveState = 'first' | 'second' | 'end';
+// export type GameStateType = {
+//     move: MoveState,
+//     prev_tile: React.JSX.Element | null; //previously clicked tile
+//     tiles: React.JSX.Element[]
+// }
+export const ClickedTileKeys = createContext<number[]>([]);
 
-type ChildProps = {
+type GameBoardProps = {
     option: GameOption;
+
 };
 type TileState = 'closed' | 'opened' | 'matched';
-
+type TileProps = {
+    value: string, index: number
+}
 
 function randomizeObjects<T>(array: T[]): T[]  {
     const shuffled = [...array]; // Create a copy to avoid mutating the original array
@@ -31,20 +31,24 @@ function randomizeObjects<T>(array: T[]): T[]  {
     return shuffled;
   };
   
+const tilesContext:object[] = [];
 
-function Tile({value}): React.JSX.Element {
+function Tile(props: TileProps): React.JSX.Element {
     const [tileState, setTileState]=useState<TileState>('closed');
+    const clickedTileKeys = useContext<number[]>(ClickedTileKeys);
+    tilesContext.push({value: props.value, setTileState});
+    
     const flipTile = () => {
-        if(tileState === 'matched') return; //do nothing
-        else if(tileState === 'closed') {
+        if(tileState === 'matched' || tileState === 'opened') return; //do nothing
+        else {
             setTileState('opened');
-        } else {
-            setTileState('closed');
+            clickedTileKeys.push(props.index);
+            console.log('Tile: flipTile(): ', clickedTileKeys);
         }
     }
     
     function tileFace(): string {
-        if(tileState === 'matched' || tileState == 'opened') return value;
+        if(tileState === 'matched' || tileState == 'opened') return props.value;
         else if(tileState === 'closed') return ' ';
         else return ' '; //this should not happen
     }
@@ -58,37 +62,57 @@ function Tile({value}): React.JSX.Element {
     )
 }
 
-function GameBoard(props: ChildProps): React.JSX.Element {
+function GameBoard(props: GameBoardProps): React.JSX.Element {
     const tiles: React.JSX.Element[] = [];
     const nrows = props.option.grid_size;
+    let values: number[] = [];
     for(let i=0; i<nrows * nrows / 2; ++i) {
-        tiles.push(<Tile value={i+1} key={2 * i}></Tile>);
-        tiles.push(<Tile value={i+1} key={2 * i + 1} ></Tile>);
+        values.push(i+1);
+        values.push(i+1);
     }
-    const sortedTiles: React.JSX.Element[] = randomizeObjects(tiles);
+    values = randomizeObjects(values);
+    for(let i=0; i<values.length; ++i) {
+        tiles.push(<Tile value={values[i].toString()} key={i} index={i}></Tile>);
+    }
 
     return (
-        <div className={`grid ${nrows==4 ? 'grid-cols-4 grid-rows-4': 'grid-cols-6 grid-rows-6'} gap-1`}>
-            {sortedTiles}
+        <div className={`game-board ${nrows==4 ? 'grid-cols-4 grid-rows-4': 'grid-cols-6 grid-rows-6'}`}>
+            {tiles}
         </div>
     )
 }
 
-export default function MemoryGame(props: ChildProps) {
+export default function MemoryGame(props: GameBoardProps) {
     const np = props.option.num_players;
-    const state: GameStateType = {
-        move: 'end', scores: new Array(np).fill(0),
-        time: 0, num_moves: 0
-    };
+    //let currentPlayer: number = 0;
+    const clickedTileKeys: number[] = []; 
+
+    useEffect(() => {
+        console.log('inside MemoryGame:: useEffect()');
+
+        if(clickedTileKeys.length == 2) {
+            let k1 = clickedTileKeys[0];
+            let k2 = clickedTileKeys[1];
+            if(tilesContext[k1].value === tilesContext[k2].value ) {
+                tilesContext[k1].setTileState('matched');
+                tilesContext[k2].setTilesState('matched');
+            } else {
+                tilesContext[k1].setTileState('closed');
+                tilesContext[k2].setTilesState('closed');
+            }
+            clickedTileKeys.length = 0;
+        }
+    }, [clickedTileKeys])
+
     return (
         <div>
-            <GameContext.Provider value={state}>
+            <ClickedTileKeys.Provider value={clickedTileKeys}>
                 <Header />
                 <GameBoard option={props.option}>
                 </GameBoard>
                 {np === 1 && <FooterSolo />}
                 {np !== 1 && <FooterMulti num_players={props.option.num_players}/>}
-            </GameContext.Provider>
+            </ClickedTileKeys.Provider>
         </div>
     )
 }
