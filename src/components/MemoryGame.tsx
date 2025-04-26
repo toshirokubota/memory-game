@@ -1,25 +1,24 @@
 import React from 'react';
-import {useState, useEffect, createContext, useContext } from 'react';
-import { GameOption } from "../App";
+import {useState, useEffect, useRef } from 'react';
+import { GameOption} from "../App";
 import Header from './Header'
 import FooterSolo from './FooterSolo';
 import FooterMulti from './FooterMulti';
-
-// export type MoveState = 'first' | 'second' | 'end';
-// export type GameStateType = {
-//     move: MoveState,
-//     prev_tile: React.JSX.Element | null; //previously clicked tile
-//     tiles: React.JSX.Element[]
-// }
-export const ClickedTileKeys = createContext<number[]>([]);
 
 type GameBoardProps = {
     option: GameOption;
 
 };
-type TileState = 'closed' | 'opened' | 'matched';
+
+type GameState = 'start-game' | 'playing' | 'end-turn' | 'end-game';
+type TileState = 'closed' | 'opened' | 'mismatch' | 'matched';
 type TileProps = {
-    value: string, index: number
+    value: string, 
+    index: number,
+    tileStates: TileState[],
+    gameState: GameState,
+    setTileState: React.Dispatch<React.SetStateAction<TileState[]>>
+    setClickedIndices: React.Dispatch<React.SetStateAction<number[]>>
 }
 
 function randomizeObjects<T>(array: T[]): T[]  {
@@ -29,90 +28,157 @@ function randomizeObjects<T>(array: T[]): T[]  {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
     }
     return shuffled;
-  };
-  
-const tilesContext:object[] = [];
-
-function Tile(props: TileProps): React.JSX.Element {
-    const [tileState, setTileState]=useState<TileState>('closed');
-    const clickedTileKeys = useContext<number[]>(ClickedTileKeys);
-    tilesContext.push({value: props.value, setTileState});
-    
-    const flipTile = () => {
-        if(tileState === 'matched' || tileState === 'opened') return; //do nothing
-        else {
-            setTileState('opened');
-            clickedTileKeys.push(props.index);
-            console.log('Tile: flipTile(): ', clickedTileKeys);
-        }
-    }
-    
-    function tileFace(): string {
-        if(tileState === 'matched' || tileState == 'opened') return props.value;
-        else if(tileState === 'closed') return ' ';
-        else return ' '; //this should not happen
-    }
-
-    return (
-        <button 
-            className={`tile ${tileState} w-8 h-8 rounded-full m-2 text-gray-100`} 
-            onClick={flipTile}>
-                {tileFace()}
-        </button>
-    )
-}
-
-function GameBoard(props: GameBoardProps): React.JSX.Element {
-    const tiles: React.JSX.Element[] = [];
-    const nrows = props.option.grid_size;
-    let values: number[] = [];
-    for(let i=0; i<nrows * nrows / 2; ++i) {
-        values.push(i+1);
-        values.push(i+1);
-    }
-    values = randomizeObjects(values);
-    for(let i=0; i<values.length; ++i) {
-        tiles.push(<Tile value={values[i].toString()} key={i} index={i}></Tile>);
-    }
-
-    return (
-        <div className={`game-board ${nrows==4 ? 'grid-cols-4 grid-rows-4': 'grid-cols-6 grid-rows-6'}`}>
-            {tiles}
-        </div>
-    )
-}
+  };  
 
 export default function MemoryGame(props: GameBoardProps) {
-    const np = props.option.num_players;
-    //let currentPlayer: number = 0;
-    const clickedTileKeys: number[] = []; 
+    const np = Number(props.option.num_players);
+    const grid_size = props.option.grid_size;
+    const ntiles: number = grid_size * grid_size;
+    const [gameState, setGameState] = useState<GameState>('start-game');
+    const [clickedTileIndices, setClickedTileIndices] = useState<number[]>([]); 
+    const [tileStates, setTileStates] = useState(new Array(ntiles).fill('closed'));
+    const values = useRef<string[]>(createTileValues(grid_size, null));
+    //const [idleState, setIdleState] = useState<boolean>(false); //true if it is an end of a turn. click anywhere and tiles will flip back
 
     useEffect(() => {
-        console.log('inside MemoryGame:: useEffect()');
-
-        if(clickedTileKeys.length == 2) {
-            let k1 = clickedTileKeys[0];
-            let k2 = clickedTileKeys[1];
-            if(tilesContext[k1].value === tilesContext[k2].value ) {
-                tilesContext[k1].setTileState('matched');
-                tilesContext[k2].setTilesState('matched');
-            } else {
-                tilesContext[k1].setTileState('closed');
-                tilesContext[k2].setTilesState('closed');
+        if(gameState === 'playing') {
+            if(clickedTileIndices.length >= 2) {
+                let k1 = clickedTileIndices[0];
+                let k2 = clickedTileIndices[1];
+                console.log('inside MemoryGame:: useEffect()', tileStates[k1], tileStates[k2]);
+                if(tileStates[k1] == 'opened' && tileStates[k2] == 'opened'){
+                    if(values.current[k1] === values.current[k2] ) {
+                        let newStates = [...tileStates];
+                        newStates[k1] = 'matched';
+                        newStates[k2] = 'matched';
+                        setTileStates(newStates);
+                        setClickedTileIndices([]);
+                    } else {
+                        let newStates = [...tileStates];
+                        newStates[k1] = 'mismatch';
+                        newStates[k2] = 'mismatch';
+                        setTileStates(newStates);
+                        //setIdleState(true);
+                        updateGameState(gameState); //end of the turn
+                    }
+                }
+                else if(tileStates[k1] == 'mismatch' && tileStates[k2] == 'mismatch'){
+                    let newStates = [...tileStates];
+                    newStates[k1] = 'closed';
+                    newStates[k2] = 'closed';
+                    setTileStates(newStates);
+                    setClickedTileIndices([]);
+                }
             }
-            clickedTileKeys.length = 0;
         }
-    }, [clickedTileKeys])
+    }, [tileStates, clickedTileIndices, gameState])
+
+    function updateGameState(gameState: GameState) {
+        console.log('enter updateGameState:: ', gameState);
+        if(gameState === 'start-game') setGameState('playing');
+        else if(gameState === 'playing') setGameState('end-turn');
+        else if(gameState === 'end-turn') setGameState('playing');
+        else if(gameState === 'end-game') setGameState('start-game');
+    }
+
+    function Tile(props: TileProps): React.JSX.Element {
+        const tileStates: TileState[] = props.tileStates;  
+        const index = props.index;    
+        const tileState: TileState = tileStates[index]; 
+        const gameState: GameState = props.gameState; 
+        const flipTile = () => {
+            if(gameState !== 'playing') return;
+
+            if(tileState === 'matched' || tileState === 'opened') return; //do nothing
+            else {
+                const newStates = [...tileStates];
+                newStates[index] = 'opened';
+                props.setTileState(newStates);
+                props.setClickedIndices(prev => [...prev, index]);
+            }
+        }
+        
+        function tileFace(): string {
+            return props.value;
+            // if(states[index] === 'matched' || states[index] == 'opened') return props.value;
+            // else if(states[index] === 'closed') return ' ';
+            // else return ' '; //this should not happen
+        }
+    
+        return (
+            <button 
+                className={`tile ${tileStates[index]} w-8 h-8 rounded-full m-2 text-gray-100`} 
+                onClick={flipTile}>
+                    <span>{tileFace()}</span>
+            </button>
+        )
+    }
+
+    function createTileValues(grid_size: number, lexicon: string[] | null): string[] {
+        let values: string[] = [];
+        const n = grid_size * grid_size / 2;
+        for(let i=0; i< n; ++i) {
+            if(lexicon && lexicon.length >= n) {
+                values.push(lexicon[i]);
+                values.push(lexicon[i]);
+            } else {
+                values.push((i+1).toString());
+                values.push((i+1).toString());    
+            }
+        }
+        return randomizeObjects(values);
+    }
+    
+    const tiles: React.JSX.Element[] = [];
+    for(let i=0; i<values.current.length; ++i) {
+        tiles.push(
+        <Tile
+            value={values.current[i]} 
+            index={i}
+            tileStates={tileStates}
+            gameState={gameState}
+            setTileState={setTileStates}
+            setClickedIndices={setClickedTileIndices}
+        />);
+    }
+
+    function GameControlingModal(gameState: GameState): React.JSX.Element | null {
+        //const [visible, setVisible] = useState(true);
+
+        function gameControlingMessage(gameState: GameState): string {
+            if(gameState === 'start-game') {
+                return 'click to start the game';
+            } else if(gameState === 'end-turn') {
+                return 'Mismatch. click to continue.'
+            } else if(gameState === 'end-game') {
+                return 'Game End';
+            } else {
+                return 'Cannot happen here';
+            }
+        }
+        
+        return (
+            gameState != 'playing' ?
+            <div className={`gameModal ${gameState}`} onClick={()=>{updateGameState(gameState);}}>
+                <span>{gameControlingMessage(gameState)}</span>
+            </div> : null
+        );
+    }
 
     return (
         <div>
-            <ClickedTileKeys.Provider value={clickedTileKeys}>
-                <Header />
-                <GameBoard option={props.option}>
-                </GameBoard>
-                {np === 1 && <FooterSolo />}
-                {np !== 1 && <FooterMulti num_players={props.option.num_players}/>}
-            </ClickedTileKeys.Provider>
+            <Header />
+            <div 
+                // onClick={()=>{
+                //     console.log('clicked', idleState);
+                //     setIdleState(false);
+                // }}
+                className={`game-board ${grid_size==4 ? 'grid-cols-4 grid-rows-4': 'grid-cols-6 grid-rows-6'}`}>
+                {tiles}
+            </div>
+            {np === 1 && <FooterSolo />}
+            {np !== 1 && <FooterMulti num_players={props.option.num_players}/>}
+            {GameControlingModal(gameState)}
         </div>
     )
 }

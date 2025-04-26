@@ -11,7 +11,7 @@ export default function StartGameCard(props: ChildProps) {
     function handleSubmit(formData: any) : void {
         console.log(formData);
         const theme = formData.get('theme-choice');
-        const num_players = Number(formData.get('num-players-choice'));
+        const num_players = formData.get('num-players-choice');
         const grid_size = formData.get('grid-size-choice') === '4x4' ? 4: 6;
         props.setGameOn(true);
         props.setOption({theme, num_players, grid_size});

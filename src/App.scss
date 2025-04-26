@@ -26,18 +26,44 @@ main {
 .tile {
     &.closed {
         background-color: var(--color-slate-700);
+        transition: background-color 3s ease-in;
+        span {
+            opacity: 0;
+            transition: opacity 3s ease-in;
+        }
     }
-    &.opened {
+    &.opened, &.mismatch {
         background-color: var(--color-slate-400);
+        //transition: background-color 1s ease-in;
+        span {
+            opacity: 1;
+            //transition: opacity 1s ease-in;
+        }
     }
     &.matched {
         background-color: var(--color-orange-300);
+        //transition: background-color 1s ease-in;
+        span {
+            opacity: 1;
+            //transition: opacity 1s ease-in;
+        }
     }
 }
 
 .game-board {
     display: grid;
     gap: 1rem;
+}
+
+.gameModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: transparent;
+    color: black;
+    font-size: 2rem;
 }
 
 // header {

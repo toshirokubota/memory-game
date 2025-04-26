@@ -23,15 +23,37 @@ main {
 
 .tile.closed {
   background-color: var(--color-slate-700);
+  transition: background-color 3s ease-in;
 }
-.tile.opened {
+.tile.closed span {
+  opacity: 0;
+  transition: opacity 3s ease-in;
+}
+.tile.opened, .tile.mismatch {
   background-color: var(--color-slate-400);
+}
+.tile.opened span, .tile.mismatch span {
+  opacity: 1;
 }
 .tile.matched {
   background-color: var(--color-orange-300);
+}
+.tile.matched span {
+  opacity: 1;
 }
 
 .game-board {
   display: grid;
   gap: 1rem;
+}
+
+.gameModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: transparent;
+  color: black;
+  font-size: 2rem;
 }/*# sourceMappingURL=App.css.map */
