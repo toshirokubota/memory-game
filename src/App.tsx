@@ -5,22 +5,23 @@ import MemoryGame from './components/MemoryGame';
 
 export type NumPlayers = 1 | 2 | 3 | 4;
 export type GridSize = 4 | 6;
+export type GameTheme = "numbers" | "icons"
 export type GameOption = {
-  theme: "numbers" | "icons",
+  theme: GameTheme,
   num_players: NumPlayers,
-  grid_size: GridSize
+  grid_size: GridSize,
 }
 
 function App() {
-  const [gameOn, setGameOn] = useState<boolean>(false);
+  const [initialize, setInitialize] = useState<boolean>(true);
   const [gameOption, setGameOption] = useState<GameOption> ({theme: 'numbers', num_players: 1, grid_size: 4});
   return (
     <>
       {
-        !gameOn && <StartGameCard setGameOn={setGameOn} setOption={setGameOption}/>
+        initialize && <StartGameCard initialize={setInitialize} setOption={setGameOption}/>
       }
       {
-        gameOn && <MemoryGame option={gameOption} />
+        !initialize && <MemoryGame option={gameOption} initialize={setInitialize}/>
       }
     </>
   )

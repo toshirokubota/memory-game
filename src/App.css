@@ -23,22 +23,28 @@ main {
 
 .tile.closed {
   background-color: var(--color-slate-700);
-  transition: background-color 3s ease-in;
+  transition: background-color 0.5s ease-in;
 }
-.tile.closed span {
+.tile.closed span, .tile.closed i {
   opacity: 0;
-  transition: opacity 3s ease-in;
+  transition: opacity 0.5s ease-in;
 }
-.tile.opened, .tile.mismatch {
+.tile.opened {
   background-color: var(--color-slate-400);
 }
-.tile.opened span, .tile.mismatch span {
+.tile.opened span, .tile.opened i {
+  opacity: 1;
+}
+.tile.mismatched {
+  background-color: var(--color-red-700);
+}
+.tile.mismatched span, .tile.mismatched i {
   opacity: 1;
 }
 .tile.matched {
   background-color: var(--color-orange-300);
 }
-.tile.matched span {
+.tile.matched span, .tile.matched i {
   opacity: 1;
 }
 

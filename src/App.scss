@@ -26,16 +26,24 @@ main {
 .tile {
     &.closed {
         background-color: var(--color-slate-700);
-        transition: background-color 3s ease-in;
-        span {
+        transition: background-color 0.5s ease-in;
+        span, i {
             opacity: 0;
-            transition: opacity 3s ease-in;
+            transition: opacity 0.5s ease-in;
         }
     }
-    &.opened, &.mismatch {
+    &.opened {
         background-color: var(--color-slate-400);
         //transition: background-color 1s ease-in;
-        span {
+        span, i {
+            opacity: 1;
+            //transition: opacity 1s ease-in;
+        }
+    }
+    &.mismatched {
+        background-color: var(--color-red-700);
+        //transition: background-color 1s ease-in;
+        span, i {
             opacity: 1;
             //transition: opacity 1s ease-in;
         }
@@ -43,7 +51,7 @@ main {
     &.matched {
         background-color: var(--color-orange-300);
         //transition: background-color 1s ease-in;
-        span {
+        span, i {
             opacity: 1;
             //transition: opacity 1s ease-in;
         }

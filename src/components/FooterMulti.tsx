@@ -3,16 +3,19 @@ import React from 'react';
 import {NumPlayers} from '../App';
 
 type ChildProps = {
-    num_players: NumPlayers;
+    num_players: NumPlayers,
+    scores: number[],
+    player: number,
 };
 
 export default function FooterMulti(props: ChildProps) {
 
     function ScoreBoxes(num_players: NumPlayers): React.JSX.Element[] {
         const boxes: React.JSX.Element[] = [];
-        for(let i=1; i<=num_players; ++i) {
+        for(let i=0; i<num_players; ++i) {
             boxes.push(
-                <span key={i} className='px-1 py-0.5 mx-1'>{i}</span>
+                <span key={i} className={`px-1 py-0.5 mx-1 ${i == props.player ? 'font-bold': ''}`}>
+                    {i + 1}: {props.scores[i]}</span>
             )
         }
         return boxes;

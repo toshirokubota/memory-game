@@ -2,7 +2,7 @@ import React from "react";
 import { GameOption } from '../App';
 
 type ChildProps = {
-    setGameOn: React.Dispatch<React.SetStateAction<boolean>>,
+    initialize: React.Dispatch<React.SetStateAction<boolean>>,
     setOption: React.Dispatch<React.SetStateAction<GameOption>>;
 };
 
@@ -13,7 +13,7 @@ export default function StartGameCard(props: ChildProps) {
         const theme = formData.get('theme-choice');
         const num_players = formData.get('num-players-choice');
         const grid_size = formData.get('grid-size-choice') === '4x4' ? 4: 6;
-        props.setGameOn(true);
+        props.initialize(false); //initialization done
         props.setOption({theme, num_players, grid_size});
     }
     return (
