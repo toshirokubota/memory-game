@@ -1,12 +1,9 @@
 /* media query break points */
 body {
   margin: 0;
-  display: flex;
-  justify-content: center;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: hsl(var(--primary-background-color));
-  color: hsl(var(--primary-text-color));
+  padding: 0;
+  background-color: var(--color-slate-900);
+  color: var(--color-slate-100);
 }
 
 #root {
@@ -14,11 +11,18 @@ body {
   max-width: 1400px;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  padding-inline: 1rem;
+.start-game-card input[type=radio] {
+  display: none;
+}
+.start-game-card label {
+  background-color: var(--color-slate-400);
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+  color: white;
+  text-align: center;
+}
+.start-game-card input[type=radio]:checked + label {
+  background-color: var(--color-slate-800);
 }
 
 .tile.closed {
@@ -49,6 +53,7 @@ main {
 }
 
 .game-board {
+  padding: 0.5rem;
   display: grid;
   gap: 1rem;
 }
@@ -62,4 +67,13 @@ main {
   background-color: transparent;
   color: black;
   font-size: 2rem;
+}
+
+.overlay {
+  position: fixed;
+  top: 0rem;
+  left: 0rem;
+  right: 0rem;
+  bottom: 0rem;
+  background-color: rgba(50, 50, 50, 0.5);
 }/*# sourceMappingURL=App.css.map */

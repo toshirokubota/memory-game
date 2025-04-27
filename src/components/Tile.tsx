@@ -33,7 +33,7 @@ export default function Tile(props: TileProps): React.JSX.Element {
 
   return (
     <button
-      className={`tile ${tileStates[index]} w-8 h-8 rounded-full m-2 text-gray-100`}
+      className={`tile ${tileStates[index]} h-full aspect-square rounded-full text-gray-100`}
       onClick={flipTile}
     >
       { props.type == 'numbers' ? <span>{props.value}</span>: <i className={`fa fa-${props.value}`}></i> }

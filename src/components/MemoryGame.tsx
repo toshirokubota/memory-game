@@ -1,10 +1,13 @@
 import React from 'react';
 import {useState, useEffect, useRef } from 'react';
-import { GameOption, GameTheme } from "../App";
-//import Header from './Header'
+import { GameOption, GameTheme, GameState } from "../App";
+import Header from './Header'
 import FooterSolo from './FooterSolo';
 import FooterMulti from './FooterMulti';
 import Tile from './Tile'
+import RestartButton from './RestartButton';
+import StartNewGameButton from './StartNewGameButton';
+import { formatTime } from './FooterSolo';
 
 const faIcons: string[] = ['moon', 'sun', 'fire', 'cloud', 'bell', 'car', 'frog', 'fish', 'paw', 
     'motorcycle', 'anchor', 'house', 'phone', 'futbol', 'heart', 'keyboard', 'map', 'compass'];
@@ -13,8 +16,6 @@ type GameBoardProps = {
     option: GameOption;
     initialize: React.Dispatch<React.SetStateAction<boolean>>
 };
-
-export type GameState = 'start-game' | 'playing' | 'matched' | 'mismatched' | 'end-game';
 
 function randomizeObjects<T>(array: T[]): T[] {
     const shuffled = [...array]; // Create a copy to avoid mutating the original array
@@ -150,6 +151,7 @@ export default function MemoryGame(props: GameBoardProps) {
     for(let i=0; i<values.current.length; ++i) {
         tiles.push(
         <Tile
+            key={i}
             value={values.current[i]} 
             index={i}
             type={props.option.theme}
@@ -160,107 +162,75 @@ export default function MemoryGame(props: GameBoardProps) {
         />);
     }
 
-    function RestartButton(): React.JSX.Element {
+    function EndGameModalSolo() {
         return (
-            <button className='px-2 py-0.5 mx-1' onClick={()=> {setGameState('start-game')}}>Restart</button>
-        )
-    }
-    function StartNewGameButton(): React.JSX.Element {
-        return (
-            <button className='px-2 py-0.5 mx-1' onClick={()=>props.initialize(true)}>New Game</button>    
-        )
-    }
-
-    function GameControlingModal(gameState: GameState): React.JSX.Element | null {
-        //const [visible, setVisible] = useState(true);
-        function EndGameModalSolo() {
-            return (
-                <div>
-                    <h1>You did it!</h1>
-                    <p>Game over! Here's how you got on...</p>
-                    <p><span>Time Elapsed: </span><span>{elapsedTime}</span></p>
-                    <p><span>Moves Taken: </span><span>{numMoves} Moves</span></p>
-                    <div>
-                        <RestartButton />
-                        <StartNewGameButton />
+            <div className='overlay'>
+                <div className='flex flex-col items-center p-4 mx-6 my-24 rounded-xl bg-slate-100'>
+                    <h1 className='mt-4 text-2xl text-slate-900 font-bold'>You did it!</h1>
+                    <p className='text-sm mb-4 text-slate-500 font-bold'>Game over! Here's how you got on...</p>
+                    <p className={'w-full flex justify-between mb-1 p-4 rounded-xl bg-slate-400 text-slate-900'}>
+                        <span>Time Elapsed:</span>
+                        <span>{formatTime(elapsedTime)}</span>
+                    </p>
+                    <p className={'w-full flex justify-between mb-4 p-4 rounded-xl bg-slate-400 text-slate-900'}>
+                        <span>Moves Taken:</span>
+                        <span>{numMoves} Moves</span>
+                    </p>
+                    <div className='grid gap-4 w-full m-4'>
+                        <RestartButton setGameState={setGameState} more_styles='py-4 text-lg font-bold'/>
+                        <StartNewGameButton initialize={props.initialize} more_styles='py-4 text-lg font-bold'/>
                     </div>
                 </div>
-            )
-        }
-        function EndGameModalMulti() {
-            const sortedScores = scores.map((value, index)=>({value, index}))
-                    .sort((a,b) => b.value - a.value); //reverse sort
-            const bestScore = sortedScores[0].value;
-            return (
-                <div>
-                    <h1>{ 
-                        sortedScores[0].value > sortedScores[1].value ? 
-                        `Player ${sortedScores[0].index + 1} wins` :
-                        "It's a tie!"}
-                    </h1>
-                    <p>Game over! Here are the results...</p>
-                    {
-                        sortedScores.map(score => (
-                            <p>Player {score.index + 1} {score.value == bestScore ? '(Winner!)': ''}
-                            {score.value} Pairs</p>
-                        ))
-                    }
-                    <div>
-                        <RestartButton />
-                        <StartNewGameButton />
-                    </div>
-                </div>
-            )
-        }
-
-        // function gameControlingMessage(gameState: GameState): string {
-        //     if(gameState === 'start-game') {
-        //         return 'click to start the game';
-        //     } else if(gameState === 'mismatched') {
-        //         return `Mismatch. Player #${currentPlayer + 1} goes next. Click to continue.`
-        //     } else if(gameState === 'matched'){
-        //         return `Matched! Player #${currentPlayer + 1} stays on. click to continue.`
-        //     } else if(gameState === 'end-game') {
-        //         return 'Game End';
-        //     } else {
-        //         return 'Cannot happen here';
-        //     }
-        // }
-        
+            </div>
+        )
+    }
+    function EndGameModalMulti() {
+        const sortedScores = scores.map((value, index)=>({value, index}))
+                .sort((a,b) => b.value - a.value); //reverse sort
+        const bestScore = sortedScores[0].value;
         return (
-            gameState != 'playing' ?
-            <div className={`gameModal ${gameState}`} onClick={()=>{updateGameState(gameState, undefined);}}>
+            <div className='overlay'>
+            <div className='flex flex-col items-center p-4 bg-slate-100'>
+                <h1 className='text-2xl text-slate-900 font-bold'>{ 
+                    sortedScores[0].value > sortedScores[1].value ? 
+                    `Player ${sortedScores[0].index + 1} wins` :
+                    "It's a tie!"}
+                </h1>
+                <p className='text-sm text-slate-500 font-bold'>Game over! Here are the results...</p>
                 {
-                    gameState === 'end-game' && num_players === 1 ? <EndGameModalSolo /> :
-                    gameState === 'end-game' && num_players > 1 ? <EndGameModalMulti />: null
-                    // <span>{gameControlingMessage(gameState)}</span>
+                    sortedScores.map((score, index) => (
+                        <div key={index}
+                            className={'w-full flex justify-between mx-8 my-2 p-4 rounded-md ' + 
+                            `${score.value == bestScore ? 'bg-slate-900 text-slate-100': 'bg-slate-400 text-slate-900'}`}
+                        >
+                          <span>Player {score.index + 1} {score.value == bestScore ? '(Winner!)': ''}</span>   
+                        <span>{score.value} Pairs</span></div>
+                    ))
                 }
-            </div> : null
-        );
-    }
-
-    function Header() {
-        return (
-            <header className='flex justify-between'>
-                <h1>Memory</h1>
-                <div>
-                    <button className='px-2 py-0.5 mx-1' onClick={()=> {setGameState('start-game')}}>Restart</button>
-                    <button className='px-2 py-0.5 mx-1' onClick={()=>props.initialize(true)}>New Game</button>
+                <div className='grid gap-4 w-full m-4'>
+                    <RestartButton setGameState={setGameState} more_styles='py-4 text-lg font-bold'/> 
+                    <StartNewGameButton initialize={props.initialize} more_styles='py-4 text-lg font-bold'/>
                 </div>
-            </header>
+            </div>
+            </div>
         )
     }
+
 
     return (
         <div>
-            <Header />
+            <Header setGameState={setGameState} initialize={props.initialize}/>
             <div 
-                className={`game-board ${grid_size==4 ? 'grid-cols-4 grid-rows-4': 'grid-cols-6 grid-rows-6'}`}>
+                className={`game-board ${grid_size==4 ? 'grid-cols-4 grid-rows-4 text-4xl': 'grid-cols-6 grid-rows-6 text-2xl'}`}
+                onClick={()=>{
+                    if(gameState !== 'playing') updateGameState(gameState, undefined)
+                }}>
                 {tiles}
             </div>
             {num_players === 1 && <FooterSolo moves={numMoves} elapsedTime={elapsedTime}/>}
             {num_players !== 1 && <FooterMulti num_players={props.option.num_players} scores={scores} player={currentPlayer}/>}
-            {GameControlingModal(gameState)}
+            {num_players === 1 && gameState === 'end-game' && <EndGameModalSolo />}
+            {num_players !== 1 && gameState === 'end-game' && <EndGameModalMulti />}
         </div>
     )
 }
