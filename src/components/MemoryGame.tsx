@@ -162,7 +162,7 @@ export default function MemoryGame(props: GameBoardProps) : React.JSX.Element {
     function StartMessage() : React.JSX.Element {
         return (
             <div className='overlay' onClick={()=>{updateGameState(gameState)}}>
-                <div className={'my-16 mx-auto'}>
+                <div className={'play-on-message'}>
                     <p className='text-3xl text-slate-100 font-bold text-center'>Click to start the game</p>
                 </div>
             </div>
@@ -171,7 +171,7 @@ export default function MemoryGame(props: GameBoardProps) : React.JSX.Element {
 
     return (
         <>
-            <div className='memory-game'>
+            <div className='memory-game flex flex-col'>
                 <Header setGameState={setGameState} initialize={props.initialize}/>
                 <div 
                     className={`game-board mx-auto ${grid_size==4 ? 'grid-cols-4 grid-rows-4 text-4xl': 'grid-cols-6 grid-rows-6 text-2xl'}`}

@@ -18,7 +18,7 @@ export type GameOption = {
 function App() {
   const [initialize, setInitialize] = useState<boolean>(true);
   const [gameOption, setGameOption] = useState<GameOption> ({theme: 'numbers', num_players: 1, grid_size: 4});
-  const classStr: string = 'h-screen w-full ' + `${initialize ? 'bg-slate-800': 'bg-slate-100'}`;
+  const classStr: string = 'h-screen w-full ' + `${initialize ? 'bg-slate-800': 'bg-slate-50'}`;
   return (
     <div className={classStr}>
       {

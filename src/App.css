@@ -63,7 +63,6 @@ header .static-menu {
 }
 
 .game-board {
-  padding: 0.5rem;
   display: grid;
   gap: 1rem;
 }
@@ -105,31 +104,34 @@ header .static-menu {
   border-bottom: 10px solid var(--color-orange-500);
 }
 
-footer {
-  margin-top: 3rem;
-}
-footer p {
+footer .score-box {
   flex-direction: column;
   align-items: center;
+}
+footer .score-box-player {
+  color: var(--color-slate-700);
+}
+footer .score-box-score {
+  color: var(--color-slate-900);
+}
+footer .score-box.current {
+  background-color: var(--color-orange-500);
+}
+footer .score-box.current > span {
+  color: white;
 }
 footer .score-box-player::before {
   content: "P";
 }
 footer .score-box-note {
-  opacity: 0;
-  white-space: nowrap;
+  display: none;
 }
 footer .solo-metric {
   flex-direction: column;
 }
 
-@media (min-width: 1000px) {
-  footer .score-box-note.current {
-    opacity: 1;
-  }
-}
 @media (min-width: 700px) {
-  footer p {
+  footer .score-box {
     align-items: start;
   }
   footer .score-box-player::before {
@@ -141,9 +143,18 @@ footer .solo-metric {
   }
 }
 @media (min-width: 1000px) {
-  footer p {
+  footer .score-box {
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+  }
+  footer .score-box-note {
+    display: block;
+    opacity: 0;
+  }
+  footer .score-box-note.current {
+    opacity: 1;
   }
 }
 .grid.grid-cols-3 {
@@ -171,10 +182,11 @@ footer .solo-metric {
 }
 
 .game-board {
-  width: clamp(280px, 70vw, 600px);
+  width: clamp(280px, 60vw, 500px);
+  margin-inline: auto;
 }
 
-.start-game-card, .end-card, .memory-game {
+.start-game-card, .end-card, .memory-game, .play-on-message {
   position: absolute;
   top: 50%;
   left: 50%;

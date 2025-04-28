@@ -29,7 +29,7 @@ export default function Header(props: Props) {
     }
 
     return (
-        <header className='flex justify-between mx-4 mb-8 py-4'>
+        <header className='flex justify-between mx-4 mb-4 py-4'>
             <h1 className={'text-slate-800 font-bold text-lg'}>Memory</h1>
             <div className='pop-up-menu'>
                 <button 

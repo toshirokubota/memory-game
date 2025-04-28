@@ -56,33 +56,27 @@ header {
     }
     &.opened {
         background-color: var(--color-slate-400);
-        //transition: background-color 1s ease-in;
         span, i {
             opacity: 1;
-            //transition: opacity 1s ease-in;
         }
     }
     &.mismatched {
         background-color: var(--color-red-700);
-        //transition: background-color 1s ease-in;
         span, i {
             opacity: 1;
-            //transition: opacity 1s ease-in;
         }
     }
     &.matched {
         background-color: var(--color-orange-300);
-        //transition: background-color 1s ease-in;
         span, i {
             opacity: 1;
-            //transition: opacity 1s ease-in;
         }
     }
 }
 
 .game-board {
     //margin: 1rem;
-    padding: 0.5rem;
+    //padding: 0.5rem;
     display: grid;
     gap: 1rem;
 }
@@ -124,49 +118,41 @@ header {
 
     border-bottom: 10px solid var(--color-orange-500);
 }
-// @media (min-width: $desktop-break) {
-//     .score-box.current::after {
-//         content: "CURRENT TURN";
-//         position: absolute;
-//         bottom: -30px; 
-//         left: 50%;
-//         transform: translateX(-50%);
-//         font-size: 12px;
-//         color: var(--color-slate-900);
-//         white-space: nowrap;
-//     }
-// }
 
 footer {
-    margin-top: 3rem;
-    p {
+    //margin-top: 3rem;
+    .score-box {
         flex-direction: column;
         align-items: center;
+    }
+    .score-box-player {
+        color: var(--color-slate-700);
+    }
+    .score-box-score {
+        color: var(--color-slate-900);
+    }
+    .score-box.current {
+        background-color: var(--color-orange-500);
+        & > span {
+            color: white;
+        }
     }
     .score-box-player::before {
         content: "P";
     }
     .score-box-note {
-        opacity: 0;
-        white-space: nowrap;
+        display: none;
     }
     .solo-metric {
         flex-direction: column;
     }
 }
-@media (min-width: $desktop-break) {
-    footer {
-        .score-box-note.current {
-            opacity: 1;
-        }    
-    }
-}
 
 @media (min-width: $tablet-break) {
     footer {
-        p {
+        .score-box {
             align-items: start;
-        }
+        }    
         .score-box-player::before {
             content: "Player ";
         }
@@ -178,10 +164,19 @@ footer {
 } 
 @media (min-width: $desktop-break) {
     footer {
-        p {
+        .score-box {
             flex-direction: row;
             justify-content: space-between;
-        }
+            align-items: center;
+            padding: 0.75rem;
+        }    
+        .score-box-note {
+            display: block;
+            opacity: 0;
+        }    
+        .score-box-note.current {
+            opacity: 1;
+        }    
     }
 }
 
@@ -214,9 +209,10 @@ footer {
     width: clamp(300px, 80vw, 600px);
 }
 .game-board {
-    width: clamp(280px, 70vw, 600px);
+    width: clamp(280px, 60vw, 500px);
+    margin-inline: auto;
 }
-.start-game-card, .end-card, .memory-game {
+.start-game-card, .end-card, .memory-game, .play-on-message {
     position: absolute;
     top: 50%;
     left: 50%;
