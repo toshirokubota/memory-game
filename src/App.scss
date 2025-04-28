@@ -53,6 +53,10 @@ header {
             opacity: 0;
             //transition: opacity 0.5s ease-in;
         }
+        &:hover, &:focus {
+            background-color: var(--color-sky-700);
+            cursor: pointer;
+        }
     }
     &.opened {
         background-color: var(--color-slate-400);
@@ -217,4 +221,11 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+input[type='radio']+label:hover, input[type='radio']+label:focus {
+    background-color: var(--color-sky-700);
+}
+form button:hover, form button:focus {
+    background-color: var(--color-orange-300);
 }

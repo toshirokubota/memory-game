@@ -70,7 +70,7 @@ export default function StartGameCard(props: ChildProps) {
                         6x6
                     </label>
                 </div>
-                <button className='px-4 py-2 my-4 w-full bg-orange-400 rounded-4xl'>Start Game</button>
+                <button className='px-4 py-2 my-4 w-full bg-orange-400 text-slate-100 rounded-4xl'>Start Game</button>
                 {error && <p className='text-red-400 !ml-auto text-sm'>Make a choice on every option</p>}
             </form>
         </div>

@@ -43,6 +43,10 @@ header .static-menu {
 .tile.closed span, .tile.closed i {
   opacity: 0;
 }
+.tile.closed:hover, .tile.closed:focus {
+  background-color: var(--color-sky-700);
+  cursor: pointer;
+}
 .tile.opened {
   background-color: var(--color-slate-400);
 }
@@ -191,4 +195,12 @@ footer .solo-metric {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+input[type=radio] + label:hover, input[type=radio] + label:focus {
+  background-color: var(--color-sky-700);
+}
+
+form button:hover, form button:focus {
+  background-color: var(--color-orange-300);
 }/*# sourceMappingURL=App.css.map */
