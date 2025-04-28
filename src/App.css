@@ -2,13 +2,10 @@
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--color-slate-900);
-  color: var(--color-slate-100);
 }
 
 #root {
   width: 100%;
-  max-width: 1400px;
 }
 
 .start-game-card input[type=radio] {
@@ -25,20 +22,26 @@ body {
   background-color: var(--color-slate-800);
 }
 
-.header-menu {
-  display: flex;
-  flex-direction: column;
-  padding: 3rem 1rem;
-  gap: 1rem;
+header .pop-up-menu {
+  display: box;
+}
+header .static-menu {
+  display: none;
+}
+@media (min-width: 700px) {
+  header .pop-up-menu {
+    display: none;
+  }
+  header .static-menu {
+    display: block;
+  }
 }
 
 .tile.closed {
   background-color: var(--color-slate-700);
-  transition: background-color 0.5s ease-in;
 }
 .tile.closed span, .tile.closed i {
   opacity: 0;
-  transition: opacity 0.5s ease-in;
 }
 .tile.opened {
   background-color: var(--color-slate-400);
@@ -104,4 +107,76 @@ body {
 
 footer {
   margin-top: 3rem;
+}
+footer p {
+  flex-direction: column;
+  align-items: center;
+}
+footer .score-box-player::before {
+  content: "P";
+}
+footer .score-box-note {
+  opacity: 0;
+  white-space: nowrap;
+}
+footer .solo-metric {
+  flex-direction: column;
+}
+
+@media (min-width: 1000px) {
+  footer .score-box-note.current {
+    opacity: 1;
+  }
+}
+@media (min-width: 700px) {
+  footer p {
+    align-items: start;
+  }
+  footer .score-box-player::before {
+    content: "Player ";
+  }
+  footer .solo-metric {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+@media (min-width: 1000px) {
+  footer p {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+.grid.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.end-card .end-card-buttons {
+  flex-direction: column;
+}
+.end-card .end-card-buttons button {
+  width: 100%;
+}
+
+@media (min-width: 700px) {
+  .end-card .end-card-buttons {
+    flex-direction: row;
+  }
+}
+.start-game-card, .end-card {
+  width: clamp(300px, 80vw, 500px);
+}
+
+.memory-game {
+  width: clamp(300px, 80vw, 600px);
+}
+
+.game-board {
+  width: clamp(280px, 70vw, 600px);
+}
+
+.start-game-card, .end-card, .memory-game {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }/*# sourceMappingURL=App.css.map */

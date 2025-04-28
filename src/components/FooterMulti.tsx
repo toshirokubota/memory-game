@@ -13,19 +13,24 @@ export default function FooterMulti(props: ChildProps) {
     function ScoreBoxes(num_players: NumPlayers): React.JSX.Element[] {
         const boxes: React.JSX.Element[] = [];
         for(let i=0; i<num_players; ++i) {
-            const classStr: string = 'score-box flex flex-col px-1 py-0.5 mx-1 rounded-xl text-center ' + 
+            const classStr: string = 'score-box flex px-1 py-0.5 mx-1 rounded-xl text-center ' + 
                 `${i == props.player ? 'current bg-orange-500 text-white': 'bg-slate-500 text-slate-800'} `
             boxes.push(
-                <span key={i} className={classStr}>
-                    <span>P{i + 1}</span>
-                    <span>{props.scores[i]}</span>
-                </span>
+                <div key={i} className='flex flex-col'>
+                    <p className={classStr}>
+                        <span className='score-box-player'>{i + 1}</span>
+                        <span>{props.scores[i]}</span>
+                    </p>
+                    <span className={'text-center text-xs text-slate-900 score-box-note ' + `${i == props.player ? 'current': ''}`}>
+                        CURRENT PLAYER
+                    </span>
+                </div>
             )
         }
         return boxes;
     }
 
-    const classStr: string = `m-4 grid gap-4 grid-cols-${props.num_players}`;
+    const classStr: string = `m-4 grid grid-cols-${props.num_players} gap-4`;
     return (
         <footer className={classStr}>
             {ScoreBoxes(props.num_players)}

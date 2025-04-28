@@ -11,7 +11,7 @@ type Props = {
 export default function Header(props: Props) {
     const [openMenu, setOpenMenu] = useState(false);
 
-    function HeaderMenu() {
+    function PopupMenu() {
         return (
             <div className='overlay'>
                 <div className='flex flex-col gap-4 items-center p-4 mx-6 my-24 rounded-xl bg-slate-100'>
@@ -20,7 +20,7 @@ export default function Header(props: Props) {
                     <RestartButton setGameState={props.setGameState} more_styles={'w-full py-4'}/>
                     <StartNewGameButton initialize={props.initialize} more_styles={'w-full py-4'}/>
                     <button onClick={()=>setOpenMenu(false)}
-                        className='w-full px-2 py-0.5 bg-slate-300 text-slate-800 font-bold rounded-4xl py-4'>
+                        className='w-full px-2 py-1/2 bg-slate-300 text-slate-800 font-bold rounded-4xl py-4'>
                         Resume Game
                     </button>
                 </div>
@@ -31,13 +31,21 @@ export default function Header(props: Props) {
     return (
         <header className='flex justify-between mx-4 mb-8 py-4'>
             <h1 className={'text-slate-800 font-bold text-lg'}>Memory</h1>
-            <div>
+            <div className='pop-up-menu'>
                 <button 
                     className={'px-2 py-0.5 mx-1 bg-orange-400 rounded-4xl'}
                     onClick={()=>{setOpenMenu(true)}}>
                     Menu
                 </button>
-                {openMenu && <HeaderMenu />}
+                {openMenu && <PopupMenu />}
+            </div>
+            <div className='static-menu'>
+                <div className='flex flex-row gap-4 items-end'>
+                    {/* <button onClick={()=>props.setGameState('end-game')}
+                        className='bg-slate-500 text-slate-50 rounded-4xl py-2'>End Game</button> */}
+                    <RestartButton setGameState={props.setGameState}/>
+                    <StartNewGameButton initialize={props.initialize}/>
+                </div>
             </div>
         </header>
     )

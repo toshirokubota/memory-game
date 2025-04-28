@@ -1,7 +1,6 @@
 import React from 'react';
 //import {useState, useEffect, useRef } from 'react';
-import { GameState} from "./MemoryGame";
-import { GameTheme } from '../App'
+import { GameTheme, GameState } from '../App'
 
 export type TileState = "closed" | "opened" | "mismatched" | "matched";
 export type TileProps = {

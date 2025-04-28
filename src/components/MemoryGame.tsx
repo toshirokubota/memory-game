@@ -170,22 +170,24 @@ export default function MemoryGame(props: GameBoardProps) : React.JSX.Element {
     }
 
     return (
-        <div>
-            <Header setGameState={setGameState} initialize={props.initialize}/>
-            <div 
-                className={`game-board ${grid_size==4 ? 'grid-cols-4 grid-rows-4 text-4xl': 'grid-cols-6 grid-rows-6 text-2xl'}`}
-                onClick={()=>{
-                    if(gameState !== 'playing') updateGameState(gameState)
-                }}>
-                {tiles}
+        <>
+            <div className='memory-game'>
+                <Header setGameState={setGameState} initialize={props.initialize}/>
+                <div 
+                    className={`game-board mx-auto ${grid_size==4 ? 'grid-cols-4 grid-rows-4 text-4xl': 'grid-cols-6 grid-rows-6 text-2xl'}`}
+                    onClick={()=>{
+                        if(gameState !== 'playing') updateGameState(gameState)
+                    }}>
+                    {tiles}
+                </div>
+                {num_players === 1 && <FooterSolo moves={numMoves} elapsedTime={elapsedTime}/>}
+                {num_players !== 1 && <FooterMulti num_players={props.option.num_players} scores={scores} player={currentPlayer}/>}
             </div>
             {gameState === 'start-game' && <StartMessage />}
-            {num_players === 1 && <FooterSolo moves={numMoves} elapsedTime={elapsedTime}/>}
-            {num_players !== 1 && <FooterMulti num_players={props.option.num_players} scores={scores} player={currentPlayer}/>}
             {num_players === 1 && gameState === 'end-game' && 
                 <EndGameCardSolo numMoves={numMoves} elapsedTime={elapsedTime} setGameState={setGameState} initialize={props.initialize}/>}
             {num_players !== 1 && gameState === 'end-game' && 
                 <EndGameCardMulti scores={scores} setGameState={setGameState} initialize={props.initialize}/>}
-        </div>
+        </>
     )
 }
