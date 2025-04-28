@@ -25,6 +25,13 @@ body {
   background-color: var(--color-slate-800);
 }
 
+.header-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 1rem;
+  gap: 1rem;
+}
+
 .tile.closed {
   background-color: var(--color-slate-700);
   transition: background-color 0.5s ease-in;
@@ -76,4 +83,25 @@ body {
   right: 0rem;
   bottom: 0rem;
   background-color: rgba(50, 50, 50, 0.5);
+}
+
+.score-box {
+  position: relative;
+}
+
+.score-box.current::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--color-orange-500);
+}
+
+footer {
+  margin-top: 3rem;
 }/*# sourceMappingURL=App.css.map */

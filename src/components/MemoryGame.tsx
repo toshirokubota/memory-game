@@ -5,9 +5,8 @@ import Header from './Header'
 import FooterSolo from './FooterSolo';
 import FooterMulti from './FooterMulti';
 import Tile from './Tile'
-import RestartButton from './RestartButton';
-import StartNewGameButton from './StartNewGameButton';
-import { formatTime } from './FooterSolo';
+import { EndGameCardSolo, EndGameCardMulti } from './EndGameCards';
+import { randomizeObjects } from '../libs';
 
 const faIcons: string[] = ['moon', 'sun', 'fire', 'cloud', 'bell', 'car', 'frog', 'fish', 'paw', 
     'motorcycle', 'anchor', 'house', 'phone', 'futbol', 'heart', 'keyboard', 'map', 'compass'];
@@ -17,15 +16,6 @@ type GameBoardProps = {
     initialize: React.Dispatch<React.SetStateAction<boolean>>
 };
 
-function randomizeObjects<T>(array: T[]): T[] {
-    const shuffled = [...array]; // Create a copy to avoid mutating the original array
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1)); // Pick a random index
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // Swap elements
-    }
-    return shuffled;
-}  
-  
 function createTileValues(
     grid_size: number,
     theme: GameTheme
@@ -46,7 +36,7 @@ function createTileValues(
     return randomizeObjects(values);
 }
   
-export default function MemoryGame(props: GameBoardProps) {
+export default function MemoryGame(props: GameBoardProps) : React.JSX.Element {
     const num_players = Number(props.option.num_players);
     const grid_size = props.option.grid_size;
     const ntiles: number = grid_size * grid_size;
@@ -87,16 +77,23 @@ export default function MemoryGame(props: GameBoardProps) {
                         newStates[k2] = 'mismatched';
                         setTileStates(newStates);
                         updateGameState(gameState, false); //end of the turn
-                        setCurrentPlayer(prev => (prev + 1) % num_players);
                     }
                     setNumMoves(prev => prev + 1);
                 }
-                else {//if(tileStates[k1] == 'mismatch' && tileStates[k2] == 'mismatch'){
+                else if(tileStates[k1] == 'matched' && tileStates[k2] == 'matched'){
                     let newStates = [...tileStates];
-                    newStates[k1] = tileStates[k1] === 'matched' ?   'opened': 'closed';
-                    newStates[k2] = tileStates[k1] === 'matched' ? 'opened': 'closed';
+                    newStates[k1] = 'opened';
+                    newStates[k2] = 'opened';
                     setTileStates(newStates);
                     setClickedTileIndices([]);
+                }
+                else if(tileStates[k1] == 'mismatched' && tileStates[k2] == 'mismatched'){
+                    let newStates = [...tileStates];
+                    newStates[k1] = 'closed';
+                    newStates[k2] = 'closed';
+                    setTileStates(newStates);
+                    setClickedTileIndices([]);
+                    setCurrentPlayer(prev => (prev + 1) % num_players); //change the player
                 }
             }
         }
@@ -126,7 +123,7 @@ export default function MemoryGame(props: GameBoardProps) {
       }, []);
 
     
-    function updateGameState(gameState: GameState, matched: boolean | undefined) {
+    function updateGameState(gameState: GameState, matched?: boolean) {
         console.log('enter updateGameState:: ', gameState);
         if(gameState === 'start-game') {
             setGameState('playing');
@@ -162,60 +159,15 @@ export default function MemoryGame(props: GameBoardProps) {
         />);
     }
 
-    function EndGameModalSolo() {
+    function StartMessage() : React.JSX.Element {
         return (
-            <div className='overlay'>
-                <div className='flex flex-col items-center p-4 mx-6 my-24 rounded-xl bg-slate-100'>
-                    <h1 className='mt-4 text-2xl text-slate-900 font-bold'>You did it!</h1>
-                    <p className='text-sm mb-4 text-slate-500 font-bold'>Game over! Here's how you got on...</p>
-                    <p className={'w-full flex justify-between mb-1 p-4 rounded-xl bg-slate-400 text-slate-900'}>
-                        <span>Time Elapsed:</span>
-                        <span>{formatTime(elapsedTime)}</span>
-                    </p>
-                    <p className={'w-full flex justify-between mb-4 p-4 rounded-xl bg-slate-400 text-slate-900'}>
-                        <span>Moves Taken:</span>
-                        <span>{numMoves} Moves</span>
-                    </p>
-                    <div className='grid gap-4 w-full m-4'>
-                        <RestartButton setGameState={setGameState} more_styles='py-4 text-lg font-bold'/>
-                        <StartNewGameButton initialize={props.initialize} more_styles='py-4 text-lg font-bold'/>
-                    </div>
+            <div className='overlay' onClick={()=>{updateGameState(gameState)}}>
+                <div className={'my-16 mx-auto'}>
+                    <p className='text-3xl text-slate-100 font-bold text-center'>Click to start the game</p>
                 </div>
             </div>
         )
     }
-    function EndGameModalMulti() {
-        const sortedScores = scores.map((value, index)=>({value, index}))
-                .sort((a,b) => b.value - a.value); //reverse sort
-        const bestScore = sortedScores[0].value;
-        return (
-            <div className='overlay'>
-            <div className='flex flex-col items-center p-4 bg-slate-100'>
-                <h1 className='text-2xl text-slate-900 font-bold'>{ 
-                    sortedScores[0].value > sortedScores[1].value ? 
-                    `Player ${sortedScores[0].index + 1} wins` :
-                    "It's a tie!"}
-                </h1>
-                <p className='text-sm text-slate-500 font-bold'>Game over! Here are the results...</p>
-                {
-                    sortedScores.map((score, index) => (
-                        <div key={index}
-                            className={'w-full flex justify-between mx-8 my-2 p-4 rounded-md ' + 
-                            `${score.value == bestScore ? 'bg-slate-900 text-slate-100': 'bg-slate-400 text-slate-900'}`}
-                        >
-                          <span>Player {score.index + 1} {score.value == bestScore ? '(Winner!)': ''}</span>   
-                        <span>{score.value} Pairs</span></div>
-                    ))
-                }
-                <div className='grid gap-4 w-full m-4'>
-                    <RestartButton setGameState={setGameState} more_styles='py-4 text-lg font-bold'/> 
-                    <StartNewGameButton initialize={props.initialize} more_styles='py-4 text-lg font-bold'/>
-                </div>
-            </div>
-            </div>
-        )
-    }
-
 
     return (
         <div>
@@ -223,14 +175,17 @@ export default function MemoryGame(props: GameBoardProps) {
             <div 
                 className={`game-board ${grid_size==4 ? 'grid-cols-4 grid-rows-4 text-4xl': 'grid-cols-6 grid-rows-6 text-2xl'}`}
                 onClick={()=>{
-                    if(gameState !== 'playing') updateGameState(gameState, undefined)
+                    if(gameState !== 'playing') updateGameState(gameState)
                 }}>
                 {tiles}
             </div>
+            {gameState === 'start-game' && <StartMessage />}
             {num_players === 1 && <FooterSolo moves={numMoves} elapsedTime={elapsedTime}/>}
             {num_players !== 1 && <FooterMulti num_players={props.option.num_players} scores={scores} player={currentPlayer}/>}
-            {num_players === 1 && gameState === 'end-game' && <EndGameModalSolo />}
-            {num_players !== 1 && gameState === 'end-game' && <EndGameModalMulti />}
+            {num_players === 1 && gameState === 'end-game' && 
+                <EndGameCardSolo numMoves={numMoves} elapsedTime={elapsedTime} setGameState={setGameState} initialize={props.initialize}/>}
+            {num_players !== 1 && gameState === 'end-game' && 
+                <EndGameCardMulti scores={scores} setGameState={setGameState} initialize={props.initialize}/>}
         </div>
     )
 }

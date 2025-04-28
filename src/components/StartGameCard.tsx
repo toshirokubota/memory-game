@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { GameOption } from '../App';
 
 type ChildProps = {
@@ -8,13 +8,21 @@ type ChildProps = {
 
 
 export default function StartGameCard(props: ChildProps) {
+    const [error, setError] = useState(false);
     function handleSubmit(formData: any) : void {
         console.log(formData);
         const theme = formData.get('theme-choice');
         const num_players = formData.get('num-players-choice');
-        const grid_size = formData.get('grid-size-choice') === '4x4' ? 4: 6;
-        props.initialize(false); //initialization done
-        props.setOption({theme, num_players, grid_size});
+        const grid_size_choice = formData.get('grid-size-choice');
+        console.log(theme, num_players, grid_size_choice)
+        if(theme && num_players && grid_size_choice) {
+            const grid_size =  grid_size_choice === '4x4' ? 4: 6
+            props.initialize(false); //initialization done
+            props.setOption({theme, num_players, grid_size});
+            setError(false);
+        } else {
+            setError(true);
+        }
     }
     return (
         <div className='start-game-card'>
@@ -63,6 +71,7 @@ export default function StartGameCard(props: ChildProps) {
                     </label>
                 </div>
                 <button className='px-4 py-2 my-4 w-full bg-orange-400 rounded-4xl'>Start Game</button>
+                {error && <p className='text-red-400 !ml-auto text-sm'>Make a choice on every option</p>}
             </form>
         </div>
     )
