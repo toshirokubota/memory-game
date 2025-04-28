@@ -13,7 +13,7 @@ export default function FooterMulti(props: ChildProps) {
     function ScoreBoxes(num_players: NumPlayers): React.JSX.Element[] {
         const boxes: React.JSX.Element[] = [];
         for(let i=0; i<num_players; ++i) {
-            const classStr: string = 'score-box flex items-center px-1 py-0.5 rounded-xl text-center ' + 
+            const classStr: string = 'score-box flex px-1 py-0.5 rounded-xl text-center ' + 
                 `${i == props.player ? 'current bg-orange-500 text-white': 'bg-slate-300'} `
             boxes.push(
                 <div key={i} className='flex flex-col'>
